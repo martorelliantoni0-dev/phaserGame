@@ -76,7 +76,6 @@ function onFaceDetected(results: any): void {
 setupCamera().then(startFaceMesh);
 
 export default class Intro extends Phaser.Scene {
-  private npc!: Phaser.GameObjects.Sprite;
   private lastEmotion: string = "neutro";
 
   constructor() {
@@ -84,11 +83,15 @@ export default class Intro extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image("npc", "assets/images/npc.png");
+    this.load.image("bg1", "assets/images/bg/1.png");
   }
 
   create(): void {
-    this.npc = this.add.sprite(400, 300, "npc").setScale(1.5);
+    let interactiveZone = this.add.zone(800,380, 300, 300).setInteractive(); //zona1 Strada al centro
+    interactiveZone.on('pointerdown', () => {
+        console.log('Zona interattiva cliccata!');
+    });
+    this.physics.add.sprite(this.cameras.main.width/2,this.cameras.main.height/2, "bg1").setScale(1.9,1.4)
   }
 
   update(): void {
@@ -96,13 +99,6 @@ export default class Intro extends Phaser.Scene {
     if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
       this.lastEmotion = window.currentEmotion;
 
-      if (this.lastEmotion === "felice") {
-        this.npc.setTint(0x00ff00); // Verde per felice
-      } else if (this.lastEmotion === "triste") {
-        this.npc.setTint(0xff0000); // Rosso per triste
-      } else {
-        this.npc.clearTint(); // Neutro, torna normale
-      }
     }
   }
 }
