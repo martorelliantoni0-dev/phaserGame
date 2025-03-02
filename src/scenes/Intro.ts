@@ -16,7 +16,7 @@ videoElement.autoplay = true;
 document.body.appendChild(videoElement); // Facoltativo: mostra il video
 
 async function setupCamera(): Promise<void> {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
   videoElement.srcObject = stream;
   return new Promise((resolve) => {
     videoElement.onloadedmetadata = () => resolve();
@@ -31,8 +31,8 @@ async function startFaceMesh(): Promise<void> {
   faceMesh.setOptions({
     maxNumFaces: 1,
     refineLandmarks: true,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.7,
   });
 
   faceMesh.onResults(onFaceDetected);
@@ -41,12 +41,14 @@ async function startFaceMesh(): Promise<void> {
     onFrame: async () => {
       await faceMesh.send({ image: videoElement });
     },
-    width: 640,
-    height: 480,
+    width: 1280,
+    height: 720,
   });
 
   camera.start();
 }
+
+let emotionHistory: string[] = [];
 
 function onFaceDetected(results: any): void {
   if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) return;
@@ -69,8 +71,17 @@ function onFaceDetected(results: any): void {
     emotion = "triste";
   }
 
-  console.log("Espressione:", emotion);
-  window.currentEmotion = emotion;
+  // Aggiungi l'emozione alla cronologia
+  emotionHistory.push(emotion);
+  if (emotionHistory.length > 10) emotionHistory.shift();
+
+  // Calcola l'emozione più frequente nella cronologia
+  const mostFrequentEmotion = emotionHistory.sort((a, b) =>
+    emotionHistory.filter(v => v === a).length - emotionHistory.filter(v => v === b).length
+  ).pop();
+
+  console.log("Espressione:", mostFrequentEmotion);
+  window.currentEmotion = mostFrequentEmotion;
 }
 
 setupCamera().then(startFaceMesh);
@@ -87,9 +98,22 @@ export default class Intro extends Phaser.Scene {
   }
 
   create(): void {
-    let interactiveZone = this.add.zone(800,380, 300, 300).setInteractive(); //zona1 Strada al centro
-    interactiveZone.on('pointerdown', () => {
-        console.log('Zona interattiva cliccata!');
+    // Creazione della zona interattiva
+    let interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive(); //zona1 strada centrale
+    interactiveZone1.on('pointerdown', () => {
+      console.log('Zona interattiva (strada centrale) cliccata!');
+      this.scene.start("GamePlay");
+    });
+
+    let interactiveZone2 = this.add.zone(300,600, 400, 300).setInteractive(); //zona2 Strada sinistra
+    interactiveZone2.on('pointerdown', () => {
+      this.scene.start("GamePlay");
+      console.log('Zona interattiva (strada sinistra) cliccata!');
+    });
+    let interactiveZone3 = this.add.zone(1750,600, 300, 300).setInteractive(); //zona3 Strada destra
+    interactiveZone3.on('pointerdown', () => {
+      this.scene.start("GamePlay");
+      console.log('Zona interattiva (strada destra) cliccata!');
     });
     this.physics.add.sprite(this.cameras.main.width/2,this.cameras.main.height/2, "bg1").setScale(1.9,1.4)
   }

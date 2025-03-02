@@ -25,13 +25,8 @@ export let GameData: gameData = {
 
   images: [
     { name: "player", path: "assets/images/player.png"},
-    { name: "phaser", path: "assets/images/logo-phaser.png" },
-    { name: "freedoom", path: "assets/images/freedoom.png" },
-    { name: "thelucasart", path: "assets/images/thelucasart.png" },
-    { name: "intro-bg", path: "assets/images/intro-bg.jpg" },
+    {name: "logo",path: "assets/images/logoS.png"},
     { name: "bg-1", path: "assets/images/bg/1.png" },
-    { name: "bg-7", path: "assets/images/bg/7.png" },
-    { name: "npc", path: "assets/image/npc.png"},
 
 
 
