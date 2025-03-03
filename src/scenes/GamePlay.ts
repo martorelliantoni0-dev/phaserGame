@@ -12,7 +12,6 @@ export default class GamePlay extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("bg7", "assets/images/bg/7.png");
     this.load.spritesheet('player', 'assets/images/player.png', {
       frameWidth: 229, 
       frameHeight: 272 
@@ -20,7 +19,6 @@ export default class GamePlay extends Phaser.Scene {
   }
 
   create() {
-    this.erba = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height / 2, "bg7").setScale(2.4,1.5).setX(960).setY(750);
     this.player = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "player").setScale(0.5,0.5);
     this.key = this.input.keyboard.createCursorKeys();
     this.erba.setImmovable(true); //non fa muovere lo sprite
