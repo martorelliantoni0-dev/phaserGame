@@ -88,7 +88,10 @@ setupCamera().then(startFaceMesh);
 
 export default class Intro extends Phaser.Scene {
   private lastEmotion: string = "neutro";
-
+  private a: integer = 0; 
+  private b: integer = 0; 
+  private c: integer = 0; 
+  private z: boolean = true;
   constructor() {
     super({ key: "Intro" });
   }
@@ -120,9 +123,23 @@ export default class Intro extends Phaser.Scene {
 
   update(): void {
     // Verifica se l'emozione è cambiata e aggiorna il tint dell'NPC
-    if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
+    if (window.currentEmotion && window.currentEmotion !== this.lastEmotion && this.z ) {
       this.lastEmotion = window.currentEmotion;
-
     }
+    if(this.lastEmotion == "triste"){
+      this.a = this.a + 1;
+    }else if(this.lastEmotion == "neutro"){
+      this.b = this.b + 1;
+    }else if(this.lastEmotion == "felice"){
+      this.c = this.c + 1;
+    }
+    if(this.a >= 10){
+      this.z = false;
+    }    if(this.b >= 10){
+      this.z = false;
+    }    if(this.c >= 10){
+      this.z = false;
+    }
+
   }
 }
