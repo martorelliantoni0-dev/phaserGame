@@ -21,19 +21,31 @@ var GamePlay = /** @class */ (function (_super) {
         }) || this;
     }
     GamePlay.prototype.preload = function () {
-        this.load.spritesheet('player', 'assets/images/player.png', {
+        this.load.spritesheet('walk_1', 'assets/images/player/walk_1.png', {
+            frameWidth: 64,
+            frameHeight: 64
+        });
+        this.load.spritesheet('walk_2', 'assets/images/player/walk_2.png', {
+            frameWidth: 229,
+            frameHeight: 272
+        });
+        this.load.spritesheet('walk_3', 'assets/images/player/walk_3.png', {
+            frameWidth: 229,
+            frameHeight: 272
+        });
+        this.load.spritesheet('walk_4', 'assets/images/player/walk_4.png', {
             frameWidth: 229,
             frameHeight: 272
         });
     };
     GamePlay.prototype.create = function () {
-        this.player = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "player").setScale(0.5, 0.5);
+        this.player = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "walk_1");
         this.key = this.input.keyboard.createCursorKeys();
         this.player.setCollideWorldBounds(true); //limita il player ai limiti dello schermo
         this.physics.world.createDebugGraphic(); // fa vedere le hitbox
         this.anims.create({
             key: 'walk',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('walk_1', { start: 0, end: 8 }),
             frameRate: 10,
             repeat: -1
         });

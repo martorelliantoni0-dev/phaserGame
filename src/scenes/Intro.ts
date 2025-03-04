@@ -88,24 +88,48 @@ setupCamera().then(startFaceMesh);
 
 export default class Intro extends Phaser.Scene {
   private lastEmotion: string = "neutro";
+  private bg1: Phaser.Physics.Arcade.Sprite;
+  private introanimation: Phaser.Physics.Arcade.Sprite;
+  private scelta: Phaser.Physics.Arcade.Sprite;
   private a: integer = 0; 
   private b: integer = 0; 
   private c: integer = 0; 
   private z: boolean = true;
+
   constructor() {
     super({ key: "Intro" });
   }
 
   preload(): void {
+    this.load.spritesheet('s1', 'assets/images/animStrada/s1.png', {
+      frameWidth: 768, 
+      frameHeight: 482 
+    });
     this.load.image("bg1", "assets/images/bg/1.png");
+    this.load.image("scelta", "assets/images/bg/scelta.jpg");
   }
 
   create(): void {
-    // Creazione della zona interattiva
+    this.anims.create({
+      key: 's1',
+      frames: this.anims.generateFrameNumbers('s1', { start: 0, end: 3 }), 
+      frameRate: 2,
+      repeat: 0
+      
+  });
+  this.bg1 = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height/2, "bg1").setScale(1.9, 1.1);
+  this.introanimation = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "s1").setVisible(false).setScale(2.5,2.3);
+  // Creazione della zona interattiva
     let interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive(); //zona1 strada centrale
     interactiveZone1.on('pointerdown', () => {
       console.log('Zona interattiva (strada centrale) cliccata!');
-      this.scene.start("GamePlay");
+      this.bg1.setVisible(false);
+      this.introanimation.setVisible(true);
+      this.introanimation.anims.play('s1', true);
+      this.time.delayedCall(1800, () => {
+        console.log("Cambia scena ");
+        this.scene.start("GamePlay");
+      });
     });
 
     let interactiveZone2 = this.add.zone(300,600, 400, 300).setInteractive(); //zona2 Strada sinistra
@@ -113,33 +137,35 @@ export default class Intro extends Phaser.Scene {
       this.scene.start("GamePlay");
       console.log('Zona interattiva (strada sinistra) cliccata!');
     });
+
     let interactiveZone3 = this.add.zone(1750,600, 300, 300).setInteractive(); //zona3 Strada destra
     interactiveZone3.on('pointerdown', () => {
       this.scene.start("GamePlay");
       console.log('Zona interattiva (strada destra) cliccata!');
     });
-    this.physics.add.sprite(this.cameras.main.width/2,this.cameras.main.height/2, "bg1").setScale(1.9,1.4)
+
   }
 
   update(): void {
     // Verifica se l'emozione è cambiata e aggiorna il tint dell'NPC
-    if (window.currentEmotion && window.currentEmotion !== this.lastEmotion && this.z ) {
+    if (window.currentEmotion && window.currentEmotion !== this.lastEmotion && this.z) {
       this.lastEmotion = window.currentEmotion;
     }
-    if(this.lastEmotion == "triste"){
-      this.a = this.a + 1;
-    }else if(this.lastEmotion == "neutro"){
-      this.b = this.b + 1;
-    }else if(this.lastEmotion == "felice"){
-      this.c = this.c + 1;
-    }
-    if(this.a >= 10){
-      this.z = false;
-    }    if(this.b >= 10){
-      this.z = false;
-    }    if(this.c >= 10){
-      this.z = false;
+
+    switch (this.lastEmotion) {
+      case "triste":
+        this.a++;
+        break;
+      case "neutro":
+        this.b++;
+        break;
+      case "felice":
+        this.c++;
+        break;
     }
 
+    if (this.a >= 10 || this.b >= 10 || this.c >= 10) {
+      this.z = false;
+    }
   }
 }

@@ -149,15 +149,34 @@ var Intro = /** @class */ (function (_super) {
         return _this;
     }
     Intro.prototype.preload = function () {
+        this.load.spritesheet('s1', 'assets/images/animStrada/s1.png', {
+            frameWidth: 768,
+            frameHeight: 482
+        });
         this.load.image("bg1", "assets/images/bg/1.png");
+        this.load.image("scelta", "assets/images/bg/scelta.jpg");
     };
     Intro.prototype.create = function () {
         var _this = this;
+        this.anims.create({
+            key: 's1',
+            frames: this.anims.generateFrameNumbers('s1', { start: 0, end: 3 }),
+            frameRate: 2,
+            repeat: 0
+        });
+        this.bg1 = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setScale(1.9, 1.1);
+        this.introanimation = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "s1").setVisible(false).setScale(2.5, 2.3);
         // Creazione della zona interattiva
         var interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive(); //zona1 strada centrale
         interactiveZone1.on('pointerdown', function () {
             console.log('Zona interattiva (strada centrale) cliccata!');
-            _this.scene.start("GamePlay");
+            _this.bg1.setVisible(false);
+            _this.introanimation.setVisible(true);
+            _this.introanimation.anims.play('s1', true);
+            _this.time.delayedCall(1800, function () {
+                console.log("Cambia scena ");
+                _this.scene.start("GamePlay");
+            });
         });
         var interactiveZone2 = this.add.zone(300, 600, 400, 300).setInteractive(); //zona2 Strada sinistra
         interactiveZone2.on('pointerdown', function () {
@@ -169,29 +188,24 @@ var Intro = /** @class */ (function (_super) {
             _this.scene.start("GamePlay");
             console.log('Zona interattiva (strada destra) cliccata!');
         });
-        this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setScale(1.9, 1.4);
     };
     Intro.prototype.update = function () {
         // Verifica se l'emozione è cambiata e aggiorna il tint dell'NPC
         if (window.currentEmotion && window.currentEmotion !== this.lastEmotion && this.z) {
             this.lastEmotion = window.currentEmotion;
         }
-        if (this.lastEmotion == "triste") {
-            this.a = this.a + 1;
+        switch (this.lastEmotion) {
+            case "triste":
+                this.a++;
+                break;
+            case "neutro":
+                this.b++;
+                break;
+            case "felice":
+                this.c++;
+                break;
         }
-        else if (this.lastEmotion == "neutro") {
-            this.b = this.b + 1;
-        }
-        else if (this.lastEmotion == "felice") {
-            this.c = this.c + 1;
-        }
-        if (this.a >= 10) {
-            this.z = false;
-        }
-        if (this.b >= 10) {
-            this.z = false;
-        }
-        if (this.c >= 10) {
+        if (this.a >= 10 || this.b >= 10 || this.c >= 10) {
             this.z = false;
         }
     };
