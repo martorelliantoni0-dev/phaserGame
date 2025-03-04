@@ -89,8 +89,6 @@ setupCamera().then(startFaceMesh);
 export default class Intro extends Phaser.Scene {
   private lastEmotion: string = "neutro";
   private bg1: Phaser.Physics.Arcade.Sprite;
-  private introanimation: Phaser.Physics.Arcade.Sprite;
-  private scelta: Phaser.Physics.Arcade.Sprite;
   private a: integer = 0; 
   private b: integer = 0; 
   private c: integer = 0; 
@@ -101,35 +99,16 @@ export default class Intro extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.spritesheet('s1', 'assets/images/animStrada/s1.png', {
-      frameWidth: 768, 
-      frameHeight: 482 
-    });
     this.load.image("bg1", "assets/images/bg/1.png");
-    this.load.image("scelta", "assets/images/bg/scelta.jpg");
   }
 
   create(): void {
-    this.anims.create({
-      key: 's1',
-      frames: this.anims.generateFrameNumbers('s1', { start: 0, end: 3 }), 
-      frameRate: 2,
-      repeat: 0
-      
-  });
-  this.bg1 = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height/2, "bg1").setScale(1.9, 1.1);
-  this.introanimation = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "s1").setVisible(false).setScale(2.5,2.3);
+  this.bg1 = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height/2, "bg1").setScale(1.3, 1);
   // Creazione della zona interattiva
     let interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive(); //zona1 strada centrale
     interactiveZone1.on('pointerdown', () => {
       console.log('Zona interattiva (strada centrale) cliccata!');
-      this.bg1.setVisible(false);
-      this.introanimation.setVisible(true);
-      this.introanimation.anims.play('s1', true);
-      this.time.delayedCall(1800, () => {
-        console.log("Cambia scena ");
-        this.scene.start("GamePlay");
-      });
+      this.scene.start("GamePlay");
     });
 
     let interactiveZone2 = this.add.zone(300,600, 400, 300).setInteractive(); //zona2 Strada sinistra

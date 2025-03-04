@@ -3,7 +3,6 @@ import "phaser";
 //importiamo le nostre scene
 import Boot from "./scenes/Boot";
 import GamePlay from "./scenes/GamePlay";
-import Intro from "./scenes/Intro";
 //importiamo GameData che contiene i valori globali del gioco
 import { GameData } from "./GameData";
 
@@ -30,7 +29,6 @@ window.addEventListener("load", () => {
 
     scene: [
       Boot,
-      Intro,
       GamePlay,
     ],
     physics: {

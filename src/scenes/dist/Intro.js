@@ -149,34 +149,16 @@ var Intro = /** @class */ (function (_super) {
         return _this;
     }
     Intro.prototype.preload = function () {
-        this.load.spritesheet('s1', 'assets/images/animStrada/s1.png', {
-            frameWidth: 768,
-            frameHeight: 482
-        });
         this.load.image("bg1", "assets/images/bg/1.png");
-        this.load.image("scelta", "assets/images/bg/scelta.jpg");
     };
     Intro.prototype.create = function () {
         var _this = this;
-        this.anims.create({
-            key: 's1',
-            frames: this.anims.generateFrameNumbers('s1', { start: 0, end: 3 }),
-            frameRate: 2,
-            repeat: 0
-        });
-        this.bg1 = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setScale(1.9, 1.1);
-        this.introanimation = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "s1").setVisible(false).setScale(2.5, 2.3);
+        this.bg1 = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setScale(1.3, 1);
         // Creazione della zona interattiva
         var interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive(); //zona1 strada centrale
         interactiveZone1.on('pointerdown', function () {
             console.log('Zona interattiva (strada centrale) cliccata!');
-            _this.bg1.setVisible(false);
-            _this.introanimation.setVisible(true);
-            _this.introanimation.anims.play('s1', true);
-            _this.time.delayedCall(1800, function () {
-                console.log("Cambia scena ");
-                _this.scene.start("GamePlay");
-            });
+            _this.scene.start("GamePlay");
         });
         var interactiveZone2 = this.add.zone(300, 600, 400, 300).setInteractive(); //zona2 Strada sinistra
         interactiveZone2.on('pointerdown', function () {
