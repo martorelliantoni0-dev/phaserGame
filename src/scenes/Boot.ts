@@ -15,6 +15,10 @@ const videoElement: HTMLVideoElement = document.createElement("video");
 videoElement.autoplay = true;
 document.body.appendChild(videoElement);
 
+let emotionHistory: string[] = [];
+let emotionCount: number = 0;
+let stopTracking: boolean = false;
+
 async function setupCamera(): Promise<void> {
   const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
   videoElement.srcObject = stream;
@@ -24,6 +28,8 @@ async function setupCamera(): Promise<void> {
 }
 
 async function startFaceMesh(): Promise<void> {
+  if (stopTracking) return;
+
   const faceMesh = new FaceMesh({
     locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
   });
@@ -39,7 +45,9 @@ async function startFaceMesh(): Promise<void> {
 
   const camera = new Camera(videoElement, {
     onFrame: async () => {
-      await faceMesh.send({ image: videoElement });
+      if (!stopTracking) {
+        await faceMesh.send({ image: videoElement });
+      }
     },
     width: 1280,
     height: 720,
@@ -48,10 +56,8 @@ async function startFaceMesh(): Promise<void> {
   camera.start();
 }
 
-let emotionHistory: string[] = [];
-
 function onFaceDetected(results: any): void {
-  if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) return;
+  if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0 || stopTracking) return;
 
   const keypoints = results.multiFaceLandmarks[0];
 
@@ -71,27 +77,30 @@ function onFaceDetected(results: any): void {
   }
 
   emotionHistory.push(emotion);
-  if (emotionHistory.length > 10) emotionHistory.shift();
+  emotionCount++;
 
-  const mostFrequentEmotion = emotionHistory.sort((a, b) =>
-    emotionHistory.filter(v => v === a).length - emotionHistory.filter(v => v === b).length
-  ).pop();
+  if (emotionCount >= 100) {
+    stopTracking = true;
+    
+    const mostFrequentEmotion = emotionHistory.sort((a, b) =>
+      emotionHistory.filter(v => v === a).length - emotionHistory.filter(v => v === b).length
+    ).pop();
 
-  console.log("Espressione:", mostFrequentEmotion);
-  window.currentEmotion = mostFrequentEmotion;
+    console.log(`Face tracking terminato dopo 100 rilevamenti. Emozione più rilevata: ${mostFrequentEmotion}`);
+    return;
+  }
+
+  console.log("Espressione:", emotion);
+  window.currentEmotion = emotion;
 }
 
 setupCamera().then(startFaceMesh);
 
 export default class Boot extends Phaser.Scene {
   private lastEmotion: string = "neutro";
-  private bg1: Phaser.Physics.Arcade.Sprite;
-  private a: number = 0;
-  private b: number = 0;
-  private c: number = 0;
-  private z: boolean = true;
   private _logo: Phaser.GameObjects.Image;
   private sprite: Phaser.GameObjects.Sprite;
+  private zonesEnabled: boolean = false;
 
   constructor() {
     super({ key: "Boot" });
@@ -109,62 +118,64 @@ export default class Boot extends Phaser.Scene {
   create(): void {
     this._logo = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.5);
     this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "anim").setVisible(false).setScale(1.3,1);
+
     this.anims.create({
       key: 'animBG',
       frames: this.anims.generateFrameNumbers('anim', { start: 0, end: 8 }),
       frameRate: 10,
       repeat: 0
     });
+
     this.tweens.add({
       targets: this._logo,
       scale: 1.5,
       duration: 3000,
       ease: "Sine.easeInOut"
     });
+
     this.time.delayedCall(3400, () => {
       this.sprite.setVisible(true);
       this.sprite.anims.play("animBG", true);
+
+      this.sprite.on('animationcomplete', () => {
+        console.log("Animazione completata, attivando le zone interattive...");
+        this.enableInteractiveZones();
+      });
     });
+  }
+
+  enableInteractiveZones(): void {
+    this.zonesEnabled = true;
+
     let interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive();
+    let interactiveZone2 = this.add.zone(300, 600, 400, 300).setInteractive();
+    let interactiveZone3 = this.add.zone(1750, 600, 300, 300).setInteractive();
+
     interactiveZone1.on('pointerdown', () => {
-      console.log('Zona interattiva (strada centrale) cliccata!');
-      this.scene.start("GamePlay");
+      if (this.zonesEnabled) {
+        console.log('Zona interattiva (strada centrale) cliccata!');
+        this.scene.start("GamePlay");
+      }
     });
-    let interactiveZone2 = this.add.zone(300,600, 400, 300).setInteractive();
+
     interactiveZone2.on('pointerdown', () => {
-      this.scene.start("GamePlay");
-      console.log('Zona interattiva (strada sinistra) cliccata!');
+      if (this.zonesEnabled) {
+        console.log('Zona interattiva (strada sinistra) cliccata!');
+        this.scene.start("GamePlay");
+      }
     });
-    let interactiveZone3 = this.add.zone(1750,600, 300, 300).setInteractive();
+
     interactiveZone3.on('pointerdown', () => {
-      this.scene.start("GamePlay");
-      console.log('Zona interattiva (strada destra) cliccata!');
+      if (this.zonesEnabled) {
+        console.log('Zona interattiva (strada destra) cliccata!');
+        this.scene.start("GamePlay");
+      }
     });
   }
 
   update(): void {
-    if (window.currentEmotion && window.currentEmotion !== this.lastEmotion ) {
+    if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
       this.lastEmotion = window.currentEmotion;
-    }
-    switch (this.lastEmotion) {
-      case "triste":
-         this.a++;
-         if (this.a >= 10) {
-          this.z = false;
-         }
-         break;
-      case "neutro":
-         this.b++;
-          if (this.b >= 10) {
-            this.z = false;
-          }
-          break;
-      case "felice": 
-        this.c++;
-        if (this.c >= 10) {
-          this.z = false;
-        }
-        break;
     }
   }
 }

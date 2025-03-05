@@ -47,8 +47,6 @@ window.addEventListener("load", () => {
       antialias: true,
     },
   };
-
   //inizializziamo il gioco passando la configurazione
   const game = new Phaser.Game(config);
-
 });

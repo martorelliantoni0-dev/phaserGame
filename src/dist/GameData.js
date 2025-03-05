@@ -23,6 +23,11 @@ exports.GameData = {
     spritesheets: [],
     images: [
         { name: "logo", path: "assets/images/logoS.png" },
+        { name: "walk1", path: "assets/images/player/walk_1.png" },
+        { name: "walk2", path: "assets/images/player/walk_2.png" },
+        { name: "walk3", path: "assets/images/player/walk_3.png" },
+        { name: "idle", path: "assets/images/player/idle.png" },
+        { name: "walk4", path: "assets/images/player/walk_4.png" },
     ],
     atlas: [],
     sounds: [

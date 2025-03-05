@@ -56,6 +56,9 @@ var camera_utils_1 = require("@mediapipe/camera_utils");
 var videoElement = document.createElement("video");
 videoElement.autoplay = true;
 document.body.appendChild(videoElement);
+var emotionHistory = [];
+var emotionCount = 0;
+var stopTracking = false;
 function setupCamera() {
     return __awaiter(this, void 0, Promise, function () {
         var stream;
@@ -77,6 +80,8 @@ function startFaceMesh() {
         var faceMesh, camera;
         var _this = this;
         return __generator(this, function (_a) {
+            if (stopTracking)
+                return [2 /*return*/];
             faceMesh = new face_mesh_1.FaceMesh({
                 locateFile: function (file) { return "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/" + file; }
             });
@@ -91,10 +96,13 @@ function startFaceMesh() {
                 onFrame: function () { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, faceMesh.send({ image: videoElement })];
+                            case 0:
+                                if (!!stopTracking) return [3 /*break*/, 2];
+                                return [4 /*yield*/, faceMesh.send({ image: videoElement })];
                             case 1:
                                 _a.sent();
-                                return [2 /*return*/];
+                                _a.label = 2;
+                            case 2: return [2 /*return*/];
                         }
                     });
                 }); },
@@ -106,9 +114,8 @@ function startFaceMesh() {
         });
     });
 }
-var emotionHistory = [];
 function onFaceDetected(results) {
-    if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0)
+    if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0 || stopTracking)
         return;
     var keypoints = results.multiFaceLandmarks[0];
     var leftMouth = keypoints[61];
@@ -125,13 +132,17 @@ function onFaceDetected(results) {
         emotion = "triste";
     }
     emotionHistory.push(emotion);
-    if (emotionHistory.length > 10)
-        emotionHistory.shift();
-    var mostFrequentEmotion = emotionHistory.sort(function (a, b) {
-        return emotionHistory.filter(function (v) { return v === a; }).length - emotionHistory.filter(function (v) { return v === b; }).length;
-    }).pop();
-    console.log("Espressione:", mostFrequentEmotion);
-    window.currentEmotion = mostFrequentEmotion;
+    emotionCount++;
+    if (emotionCount >= 100) {
+        stopTracking = true;
+        var mostFrequentEmotion = emotionHistory.sort(function (a, b) {
+            return emotionHistory.filter(function (v) { return v === a; }).length - emotionHistory.filter(function (v) { return v === b; }).length;
+        }).pop();
+        console.log("Face tracking terminato dopo 100 rilevamenti. Emozione pi\u00F9 rilevata: " + mostFrequentEmotion);
+        return;
+    }
+    console.log("Espressione:", emotion);
+    window.currentEmotion = emotion;
 }
 setupCamera().then(startFaceMesh);
 var Boot = /** @class */ (function (_super) {
@@ -139,10 +150,7 @@ var Boot = /** @class */ (function (_super) {
     function Boot() {
         var _this = _super.call(this, { key: "Boot" }) || this;
         _this.lastEmotion = "neutro";
-        _this.a = 0;
-        _this.b = 0;
-        _this.c = 0;
-        _this.z = true;
+        _this.zonesEnabled = false;
         return _this;
     }
     Boot.prototype.preload = function () {
@@ -172,46 +180,40 @@ var Boot = /** @class */ (function (_super) {
         this.time.delayedCall(3400, function () {
             _this.sprite.setVisible(true);
             _this.sprite.anims.play("animBG", true);
+            _this.sprite.on('animationcomplete', function () {
+                console.log("Animazione completata, attivando le zone interattive...");
+                _this.enableInteractiveZones();
+            });
         });
+    };
+    Boot.prototype.enableInteractiveZones = function () {
+        var _this = this;
+        this.zonesEnabled = true;
         var interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive();
-        interactiveZone1.on('pointerdown', function () {
-            console.log('Zona interattiva (strada centrale) cliccata!');
-            _this.scene.start("GamePlay");
-        });
         var interactiveZone2 = this.add.zone(300, 600, 400, 300).setInteractive();
-        interactiveZone2.on('pointerdown', function () {
-            _this.scene.start("GamePlay");
-            console.log('Zona interattiva (strada sinistra) cliccata!');
-        });
         var interactiveZone3 = this.add.zone(1750, 600, 300, 300).setInteractive();
+        interactiveZone1.on('pointerdown', function () {
+            if (_this.zonesEnabled) {
+                console.log('Zona interattiva (strada centrale) cliccata!');
+                _this.scene.start("GamePlay");
+            }
+        });
+        interactiveZone2.on('pointerdown', function () {
+            if (_this.zonesEnabled) {
+                console.log('Zona interattiva (strada sinistra) cliccata!');
+                _this.scene.start("GamePlay");
+            }
+        });
         interactiveZone3.on('pointerdown', function () {
-            _this.scene.start("GamePlay");
-            console.log('Zona interattiva (strada destra) cliccata!');
+            if (_this.zonesEnabled) {
+                console.log('Zona interattiva (strada destra) cliccata!');
+                _this.scene.start("GamePlay");
+            }
         });
     };
     Boot.prototype.update = function () {
         if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
             this.lastEmotion = window.currentEmotion;
-        }
-        switch (this.lastEmotion) {
-            case "triste":
-                this.a++;
-                if (this.a >= 10) {
-                    this.z = false;
-                }
-                break;
-            case "neutro":
-                this.b++;
-                if (this.b >= 10) {
-                    this.z = false;
-                }
-                break;
-            case "felice":
-                this.c++;
-                if (this.c >= 10) {
-                    this.z = false;
-                }
-                break;
         }
     };
     return Boot;
