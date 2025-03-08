@@ -13,82 +13,135 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
+var playerstate;
+(function (playerstate) {
+    playerstate[playerstate["idle"] = 0] = "idle";
+    playerstate[playerstate["destra"] = 1] = "destra";
+    playerstate[playerstate["sinistra"] = 2] = "sinistra";
+    playerstate[playerstate["sopra"] = 3] = "sopra";
+    playerstate[playerstate["sotto"] = 4] = "sotto";
+    playerstate[playerstate["diagonalesottodestra"] = 5] = "diagonalesottodestra";
+    playerstate[playerstate["diagonalesottosinistra"] = 6] = "diagonalesottosinistra";
+    playerstate[playerstate["diagonalesopradestra"] = 7] = "diagonalesopradestra";
+    playerstate[playerstate["diagonalesoprasinistra"] = 8] = "diagonalesoprasinistra";
+})(playerstate || (playerstate = {}));
 var GamePlay = /** @class */ (function (_super) {
     __extends(GamePlay, _super);
     function GamePlay() {
-        return _super.call(this, {
-            key: "GamePlay"
-        }) || this;
+        var _this = _super.call(this, { key: "GamePlay" }) || this;
+        _this._playerstate = playerstate.idle;
+        _this._speed = 330;
+        return _this;
     }
     GamePlay.prototype.preload = function () {
-        this.load.image("idle", "assets/images/player/idle.png");
-        this.load.spritesheet('walk_1', 'assets/images/player/walk_1.png', {
-            frameWidth: 64,
-            frameHeight: 64
-        });
-        this.load.spritesheet('walk_2', 'assets/images/player/walk_2.png', {
-            frameWidth: 229,
-            frameHeight: 272
-        });
-        this.load.spritesheet('walk_3', 'assets/images/player/walk_3.png', {
-            frameWidth: 229,
-            frameHeight: 272
-        });
-        this.load.spritesheet('walk_4', 'assets/images/player/walk_4.png', {
-            frameWidth: 229,
-            frameHeight: 272
-        });
+        this.load.spritesheet("player", "assets/images/player/walk.png", { frameWidth: 64, frameHeight: 64 });
     };
     GamePlay.prototype.create = function () {
-        this.player = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "idle");
-        this.key = this.input.keyboard.createCursorKeys();
-        this.player.setCollideWorldBounds(true); //limita il player ai limiti dello schermo
-        this.physics.world.createDebugGraphic(); // fa vedere le hitbox
+        this.player = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "player");
+        this.player.body.setSize(35, 58);
+        this.player.body.setOffset(13, 13);
+        this.physics.world.createDebugGraphic();
+        this.player.setCollideWorldBounds(true);
+        this.physics.world.setBounds(0, 0, 1920, 1080);
+        // Creazione animazioni
         this.anims.create({
-            key: 'walk1',
-            frames: this.anims.generateFrameNumbers('walk_1', { start: 0, end: 9 }),
-            frameRate: 10,
+            key: "player-running-sinistra",
+            frames: this.anims.generateFrameNumbers("player", { start: 9, end: 17 }),
+            frameRate: 9,
             repeat: -1
         });
         this.anims.create({
-            key: 'walk2',
-            frames: this.anims.generateFrameNumbers('walk_2', { start: 0, end: 8 }),
-            frameRate: 10,
+            key: "player-running-destra",
+            frames: this.anims.generateFrameNumbers("player", { start: 27, end: 35 }),
+            frameRate: 9,
             repeat: -1
         });
         this.anims.create({
-            key: 'walk3',
-            frames: this.anims.generateFrameNumbers('walk_3', { start: 0, end: 8 }),
-            frameRate: 10,
+            key: "player-running-sopra",
+            frames: this.anims.generateFrameNumbers("player", { start: 0, end: 8 }),
+            frameRate: 9,
             repeat: -1
         });
         this.anims.create({
-            key: 'walk4',
-            frames: this.anims.generateFrameNumbers('walk_4', { start: 0, end: 8 }),
-            frameRate: 10,
+            key: "player-running-sotto",
+            frames: this.anims.generateFrameNumbers("player", { start: 18, end: 26 }),
+            frameRate: 9,
             repeat: -1
         });
+        this.anims.create({
+            key: "player-idle",
+            frames: [{ key: "player", frame: 18 }],
+            frameRate: 9
+        });
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.cameras.main.centerOn(0, 0);
     };
     GamePlay.prototype.update = function () {
-        this.player.setVelocity(0);
-        if (this.key.left.isDown) {
-            this.player.anims.play('walk2', true);
-            this.player.setVelocityX(-160);
+        var velocityX = 0;
+        var velocityY = 0;
+        var moving = false;
+        if (this.cursors.left.isDown) {
+            velocityX = -this._speed;
+            this._playerstate = this.cursors.up.isDown
+                ? playerstate.diagonalesoprasinistra
+                : this.cursors.down.isDown
+                    ? playerstate.diagonalesottosinistra
+                    : playerstate.sinistra;
+            moving = true;
         }
-        else if (this.key.right.isDown) {
-            this.player.setVelocityX(160);
-            this.player.anims.play('walk4', true);
+        else if (this.cursors.right.isDown) {
+            velocityX = this._speed;
+            this._playerstate = this.cursors.up.isDown
+                ? playerstate.diagonalesopradestra
+                : this.cursors.down.isDown
+                    ? playerstate.diagonalesottodestra
+                    : playerstate.destra;
+            moving = true;
         }
-        else if (this.key.up.isDown) {
-            this.player.setVelocityY(-160);
-            this.player.anims.play('walk1', true);
+        if (this.cursors.up.isDown) {
+            velocityY = -this._speed;
+            if (!this.cursors.left.isDown && !this.cursors.right.isDown) {
+                this._playerstate = playerstate.sopra;
+            }
+            moving = true;
         }
-        else if (this.key.down.isDown) {
-            this.player.setVelocityY(160);
-            this.player.anims.play('walk3', true);
+        else if (this.cursors.down.isDown) {
+            velocityY = this._speed;
+            if (!this.cursors.left.isDown && !this.cursors.right.isDown) {
+                this._playerstate = playerstate.sotto;
+            }
+            moving = true;
         }
-        else if (this.key.up) {
-            this.player.anims.stop();
+        // Normalizzazione della velocità per il movimento diagonale
+        var magnitude = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+        if (magnitude > 0) {
+            velocityX = (velocityX / magnitude) * this._speed;
+            velocityY = (velocityY / magnitude) * this._speed;
+        }
+        this.player.setVelocity(velocityX, velocityY);
+        if (!moving) {
+            this._playerstate = playerstate.idle;
+            this.player.anims.play("player-idle", true);
+        }
+        else {
+            switch (this._playerstate) {
+                case playerstate.destra:
+                case playerstate.diagonalesopradestra:
+                case playerstate.diagonalesottodestra:
+                    this.player.anims.play("player-running-destra", true);
+                    break;
+                case playerstate.sinistra:
+                case playerstate.diagonalesoprasinistra:
+                case playerstate.diagonalesottosinistra:
+                    this.player.anims.play("player-running-sinistra", true);
+                    break;
+                case playerstate.sopra:
+                    this.player.anims.play("player-running-sopra", true);
+                    break;
+                case playerstate.sotto:
+                    this.player.anims.play("player-running-sotto", true);
+                    break;
+            }
         }
     };
     return GamePlay;
