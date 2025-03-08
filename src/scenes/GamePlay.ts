@@ -27,7 +27,7 @@ export default class GamePlay extends Phaser.Scene {
   create() {
     this.player = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height/2, "player");
     this.player.body.setSize(35, 58);
-    this.player.body.setOffset(13, 13);
+    this.player.body.setOffset(13, 12);
     this.physics.world.createDebugGraphic();
     this.player.setCollideWorldBounds(true);
     this.physics.world.setBounds(0, 0, 1920, 1080);
@@ -68,7 +68,6 @@ export default class GamePlay extends Phaser.Scene {
     });
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.cameras.main.centerOn(0, 0);
   }
 
   update() {
