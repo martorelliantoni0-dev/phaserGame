@@ -25,12 +25,9 @@ export let GameData: gameData = {
 
   images: [
     {name: "logo",path: "assets/images/logoS.png"},
-    {name: "walk1",path: "assets/images/player/walk_1.png"},
-    {name: "walk2",path: "assets/images/player/walk_2.png"},
-    {name: "walk3",path: "assets/images/player/walk_3.png"},
-    {name: "idle",path: "assets/images/player/idle.png"},
-    {name: "walk4",path: "assets/images/player/walk_4.png"},
-
+    {name: "walk",path: "assets/images/player/walk.png"},
+    {name: "spritesheet",path: "assets/images/spritesheet.png"},
+    {name: "bg1",path: "assets/images/bg1.jpg"},
   ],
   atlas: [],
   sounds: [

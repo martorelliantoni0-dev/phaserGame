@@ -138,10 +138,9 @@ function onFaceDetected(results) {
         var mostFrequentEmotion = emotionHistory.sort(function (a, b) {
             return emotionHistory.filter(function (v) { return v === a; }).length - emotionHistory.filter(function (v) { return v === b; }).length;
         }).pop();
-        console.log("Face tracking terminato dopo 100 rilevamenti. Emozione pi\u00F9 rilevata: " + mostFrequentEmotion);
+        console.log("Face tracking terminato. Emozione pi\u00F9 rilevata: " + mostFrequentEmotion);
         return;
     }
-    console.log("Espressione:", emotion);
     window.currentEmotion = emotion;
 }
 setupCamera().then(startFaceMesh);
@@ -155,6 +154,7 @@ var Boot = /** @class */ (function (_super) {
     Boot.prototype.preload = function () {
         this.cameras.main.setBackgroundColor("#ffffff");
         this.load.image("logo", "assets/images/logoS.png");
+        this.load.image("bg1", "assets/images/bg1.jpg");
         this.load.spritesheet("animation", "assets/images/spritesheet.png", {
             frameWidth: 1040,
             frameHeight: 1040
@@ -162,7 +162,9 @@ var Boot = /** @class */ (function (_super) {
     };
     Boot.prototype.create = function () {
         var _this = this;
-        this._logo = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.5);
+        this._logo = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.3);
+        this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "animation").setVisible(false);
+        this.bg = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setVisible(false).setScale(0.5);
         this.tweens.add({
             targets: this._logo,
             scale: 1.5,
@@ -171,13 +173,21 @@ var Boot = /** @class */ (function (_super) {
         });
         this.anims.create({
             key: "playAnimation",
-            frames: this.anims.generateFrameNumbers("animation", { start: 0, end: 17 }),
-            frameRate: 60,
+            frames: this.anims.generateFrameNumbers("animation", {
+                start: 0,
+                end: 17
+            }),
+            frameRate: 10,
             repeat: 0
         });
-        this.time.delayedCall(3000, function () {
-            _this.sprite = _this.add.sprite(_this.cameras.main.width / 2, _this.cameras.main.height / 2, "animation");
+        this.time.delayedCall(3500, function () {
+            _this._logo.setVisible(false);
+            _this.sprite.setVisible(true);
             _this.sprite.anims.play("playAnimation");
+            _this.sprite.on("animationcomplete", function () {
+                console.log("Animazione completata");
+                _this.bg.setVisible(true);
+            });
         });
     };
     Boot.prototype.update = function () {
