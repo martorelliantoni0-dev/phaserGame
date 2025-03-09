@@ -1,7 +1,7 @@
 export let GameData: gameData = {
   globals: {
-    gameWidth: 1920,
-    gameHeight: 1080,
+    gameWidth: 1040,
+    gameHeight: 1040,
     bgColor: "#ffffff",
     debug: false
   },

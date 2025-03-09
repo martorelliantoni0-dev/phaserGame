@@ -96,11 +96,11 @@ function onFaceDetected(results: any): void {
 
 setupCamera().then(startFaceMesh);
 
+
 export default class Boot extends Phaser.Scene {
   private lastEmotion: string = "neutro";
-  private _logo: Phaser.GameObjects.Image;
+  private _logo: Phaser.GameObjects.Sprite;
   private sprite: Phaser.GameObjects.Sprite;
-  private zonesEnabled: boolean = false;
 
   constructor() {
     super({ key: "Boot" });
@@ -109,73 +109,38 @@ export default class Boot extends Phaser.Scene {
   preload(): void {
     this.cameras.main.setBackgroundColor("#ffffff");
     this.load.image("logo", "assets/images/logoS.png");
-    this.load.spritesheet('anim', 'assets/images/bganim/spritesheet1.png', {
-      frameWidth: 1565,
-      frameHeight: 1136
+    this.load.spritesheet("animation", "assets/images/spritesheet.png", {
+      frameWidth: 1040,
+      frameHeight: 1040,
     });
   }
 
   create(): void {
-    this._logo = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.5);
-    this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "anim").setVisible(false).setScale(1.3,1);
-
-    this.anims.create({
-      key: 'animBG',
-      frames: this.anims.generateFrameNumbers('anim', { start: 0, end: 8 }),
-      frameRate: 10,
-      repeat: 0
-    });
-
+    this._logo = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.5);
     this.tweens.add({
       targets: this._logo,
       scale: 1.5,
       duration: 3000,
-      ease: "Sine.easeInOut"
+      ease: "Sine.easeInOut",
+    });
+    this.anims.create({
+      key: "playAnimation",
+      frames: this.anims.generateFrameNumbers("animation", { start: 0, end: 17 }),
+      frameRate: 60,
+      repeat: 0,
+    });
+    this.time.delayedCall(3000,() => {
+      this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "animation");
+      this.sprite.anims.play("playAnimation");
     });
 
-    this.time.delayedCall(3400, () => {
-      this.sprite.setVisible(true);
-      this.sprite.anims.play("animBG", true);
 
-      this.sprite.on('animationcomplete', () => {
-        console.log("Animazione completata, attivando le zone interattive...");
-        this.enableInteractiveZones();
-      });
-    });
-  }
-
-  enableInteractiveZones(): void {
-    this.zonesEnabled = true;
-
-    let interactiveZone1 = this.add.zone(950, 375, 200, 400).setInteractive();
-    let interactiveZone2 = this.add.zone(300, 600, 400, 300).setInteractive();
-    let interactiveZone3 = this.add.zone(1750, 600, 300, 300).setInteractive();
-
-    interactiveZone1.on('pointerdown', () => {
-      if (this.zonesEnabled) {
-        console.log('Zona interattiva (strada centrale) cliccata!');
-        this.scene.start("GamePlay");
-      }
-    });
-
-    interactiveZone2.on('pointerdown', () => {
-      if (this.zonesEnabled) {
-        console.log('Zona interattiva (strada sinistra) cliccata!');
-        this.scene.start("GamePlay");
-      }
-    });
-
-    interactiveZone3.on('pointerdown', () => {
-      if (this.zonesEnabled) {
-        console.log('Zona interattiva (strada destra) cliccata!');
-        this.scene.start("GamePlay");
-      }
-    });
   }
 
   update(): void {
     if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
       this.lastEmotion = window.currentEmotion;
+      console.log("Emozione aggiornata:", this.lastEmotion);
     }
   }
 }
