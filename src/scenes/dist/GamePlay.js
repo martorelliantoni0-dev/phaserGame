@@ -42,7 +42,7 @@ var GamePlay = /** @class */ (function (_super) {
         this.player.body.setOffset(13, 12);
         this.physics.world.createDebugGraphic();
         this.player.setCollideWorldBounds(true);
-        this.physics.world.setBounds(0, 0, 1920, 1080);
+        this.physics.world.setBounds(0, 0, 1040, 1040);
         // Creazione animazioni
         this.anims.create({
             key: "player-running-sinistra",

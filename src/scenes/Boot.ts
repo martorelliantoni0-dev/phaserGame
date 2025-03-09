@@ -105,10 +105,7 @@ export default class Boot extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#ffffff");
     this.load.image("logo", "assets/images/logoS.png");
     this.load.image("bg1", "assets/images/bg1.jpg");
-    this.load.spritesheet("animation", "assets/images/spritesheet.png", {
-      frameWidth: 1040, 
-      frameHeight: 1040, 
-    });
+    this.load.spritesheet("animation", "assets/images/spritesheet.png", {frameWidth: 1040, frameHeight: 1040, });
   }
 
   create(): void {

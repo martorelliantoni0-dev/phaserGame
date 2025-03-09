@@ -155,10 +155,7 @@ var Boot = /** @class */ (function (_super) {
         this.cameras.main.setBackgroundColor("#ffffff");
         this.load.image("logo", "assets/images/logoS.png");
         this.load.image("bg1", "assets/images/bg1.jpg");
-        this.load.spritesheet("animation", "assets/images/spritesheet.png", {
-            frameWidth: 1040,
-            frameHeight: 1040
-        });
+        this.load.spritesheet("animation", "assets/images/spritesheet.png", { frameWidth: 1040, frameHeight: 1040 });
     };
     Boot.prototype.create = function () {
         var _this = this;
