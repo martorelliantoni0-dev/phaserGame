@@ -9,8 +9,6 @@ declare global {
   }
 }
 
-// --- FaceMesh Setup ---
-// Setting up the camera and FaceMesh for emotion detection.
 const videoElement: HTMLVideoElement = document.createElement("video");
 videoElement.autoplay = true;
 document.body.appendChild(videoElement);
@@ -92,7 +90,6 @@ function onFaceDetected(results: any): void {
 
 setupCamera().then(startFaceMesh);
 
-// --- Phaser Scene Setup ---
 export default class Boot extends Phaser.Scene {
   private lastEmotion: string = "neutro";
   private _logo: Phaser.GameObjects.Sprite;
@@ -106,34 +103,33 @@ export default class Boot extends Phaser.Scene {
   preload(): void {
     this.cameras.main.setBackgroundColor("#ffffff");
     this.load.image("logo", "assets/images/logoS.png");
-    this.load.spritesheet("animation", "assets/images/spritesheet.png", { frameWidth: 1040, frameHeight: 1040 });
+    this.load.spritesheet("animation", "assets/images/spritesheet_1.png", { frameWidth: 1040, frameHeight: 1040 });
+    this.load.spritesheet("animation1", "assets/images/spritesheet_2.png", { frameWidth: 1040, frameHeight: 1040 });
     this.load.spritesheet("bg1", "assets/images/bg1.png", { frameWidth: 2048, frameHeight: 2048 });
   }
 
   create(): void {
-    // Add the logo sprite, positioned at the center and scaled down.
     this._logo = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.3);
-
-    // Add the animation and background sprites, initially invisible.
-    this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "animation").setVisible(false);
+    this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "animation").setVisible(false).setOrigin(0.5,0.5);
     this.bg = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setVisible(false).setScale(0.55);
-
-    // Add animation tween for logo scaling.
     this.tweens.add({
       targets: this._logo,
       scale: 1.5,
       duration: 3000,
       ease: "Sine.easeInOut",
     });
-
-    // Define the animations for the sprite and background.
     this.anims.create({
       key: "playAnimation",
-      frames: this.anims.generateFrameNumbers("animation", { start: 0, end: 17 }),
-      frameRate: 6,
+      frames: this.anims.generateFrameNumbers("animation", { start: 0, end: 8 }),
+      frameRate: 2,
       repeat: 0,
     });
-
+    this.anims.create({
+      key: "playAnimation1",
+      frames: this.anims.generateFrameNumbers("animation1", { start: 0, end: 8 }),
+      frameRate: 2,
+      repeat: 0,
+    });
     this.anims.create({
       key: "playBG",
       frames: this.anims.generateFrameNumbers("bg1", { start: 0, end: 4 }),
@@ -141,23 +137,23 @@ export default class Boot extends Phaser.Scene {
       repeat: 0,
     });
 
-    // Delayed call to transition from logo to sprite animation.
     this.time.delayedCall(3500, () => {
       this._logo.setVisible(false);
       this.sprite.setVisible(true);
       this.sprite.anims.play("playAnimation");
 
-      // Play background animation after sprite animation completes.
-      this.sprite.on("animationcomplete", () => {
-        console.log("Animazione completata");
-        this.bg.setVisible(true);
-        this.bg.anims.play("playBG");
+      this.sprite.once("animationcomplete", () => {
+        this.sprite.anims.play("playAnimation1");
+
+        this.sprite.once("animationcomplete", () => {
+          console.log("Animazione completata");
+          this.bg.setVisible(true);
+          this.bg.anims.play("playBG");
+        });
       });
     });
   }
-
   update(): void {
-    // Update the emotion if it changes.
     if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
       this.lastEmotion = window.currentEmotion;
       console.log("Emozione aggiornata:", this.lastEmotion);

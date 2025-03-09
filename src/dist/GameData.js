@@ -24,7 +24,8 @@ exports.GameData = {
     images: [
         { name: "logo", path: "assets/images/logoS.png" },
         { name: "walk", path: "assets/images/player/walk.png" },
-        { name: "spritesheet", path: "assets/images/spritesheet.png" },
+        { name: "spritesheet_1", path: "assets/images/spritesheet_1.png" },
+        { name: "spritesheet_2", path: "assets/images/spritesheet_2.png" },
         { name: "bg1", path: "assets/images/bg1.jpg" },
     ],
     atlas: [],
