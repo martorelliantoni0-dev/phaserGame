@@ -177,7 +177,7 @@ var Boot = /** @class */ (function (_super) {
         this.anims.create({
             key: "playAnimation",
             frames: this.anims.generateFrameNumbers("animation", { start: 0, end: 17 }),
-            frameRate: 10,
+            frameRate: 6,
             repeat: 0
         });
         this.anims.create({

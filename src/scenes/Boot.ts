@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { FaceMesh } from "@mediapipe/face_mesh";
 import { Camera } from "@mediapipe/camera_utils";
+import { GameData } from "../GameData";
 
 declare global {
   interface Window {
@@ -129,7 +130,7 @@ export default class Boot extends Phaser.Scene {
     this.anims.create({
       key: "playAnimation",
       frames: this.anims.generateFrameNumbers("animation", { start: 0, end: 17 }),
-      frameRate: 10,
+      frameRate: 6,
       repeat: 0,
     });
 
