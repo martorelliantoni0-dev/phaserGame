@@ -1,5 +1,3 @@
-import { GameData } from "../GameData";
-import Phaser from "phaser";
 import playerr from '../scenes/moving';
 
 export default class GamePlay extends Phaser.Scene {
@@ -33,22 +31,22 @@ export default class GamePlay extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet("tipa", "assets/images/tipa.png", { frameWidth: 64, frameHeight: 64 });
-    this.load.image("ziodonny", "assets/images/phaser.png");
-    this.load.image("player", "assets/images/player.png");
+    this.load.spritesheet("walk", "assets/images/player/walk.png", { frameWidth: 64, frameHeight: 64 });
     this.load.tilemapTiledJSON('level-0', 'assets/map/level-0.json');
     this.load.image('tilemap-extruded', 'assets/map/tilemap-extruded.png');
-    this.load.image('fogliaanomala', 'assets/images/fogliaanomala.png'); // Carica l'immagine fogliaanomala.png
+    this.load.image('lampros', 'assets/images/fogliaanomala.png'); 
     this.load.image('lampverdee', 'assets/images/lampverdee.png');
     this.load.image('lampblu', 'assets/images/lampblu.png');
-    this.load.image('lampros', 'assets/images/lampros.png');
+    this.load.image('pallagrande', 'assets/images/pallagrande.png');
+    this.load.image('pallapiccola', 'assets/images/pallapiccola.png');
+    this.load.image('lamprosa', 'assets/images/lampros.png');
     this.load.image('lampgial', 'assets/images/lampgial.png');
     this.load.image('foglia', 'assets/images/foglia.png');
-    this.physics.world.createDebugGraphic();
   }
 
   create() {
     this.player = new playerr(this, 470, 930);
+    this.physics.world.createDebugGraphic();
     this.map = this.make.tilemap({ key: "level-0" });
     this.tileset = this.map.addTilesetImage("tilemap-extruded");
     this.world = this.map.createLayer("world", this.tileset, 0, 0);
@@ -60,16 +58,85 @@ export default class GamePlay extends Phaser.Scene {
 
     this.collisions = this.map.createLayer("collisions", this.tileset, 0, 0);
     if (this.collisions) {
-      this.collisions.setDepth(2).setAlpha(1);
+      this.collisions.setDepth(0).setAlpha(1);
       this.collisions.setCollisionByProperty({ colllide: true }); // Imposta la collisione per i tile con la proprietà 'collide'
     } else {
       console.error("Layer 'collisions' non trovato!");
     }
 
-    // Crea un'istanza della classe playerr
-
+    //zoom e camera sulla mappa
     const mapWidth = this.map.widthInPixels;
     const mapHeight = this.map.heightInPixels;
+    this.cameras.main.setScroll(mapWidth / 2 - this.cameras.main.width / 2, mapHeight / 2 - this.cameras.main.height / 2);
+    this.cameras.main.setZoom(1);
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    this.centerHitbox = this.physics.add.sprite(540, 130, null).setOrigin(0.5, 0.5);
+    this.centerHitbox.body.setSize(20, 80); // Imposta le dimensioni della hitbox
+    this.centerHitbox.setImmovable(true); // Rendi l'oggetto immobile
+    this.centerHitbox.setVisible(false); // Rendi l'oggetto invisibile
+    this.centerHitbox.setDebug(true, true, 0xff0000);
+
+    const fogliaanomala = this.add.image(this.centerHitbox.x, this.centerHitbox.y, 'lampros');
+    fogliaanomala.setOrigin(0.5, 0.52).setDepth(1).setScale(0.91, 0.91);
+    this.time.addEvent({
+      delay: 400,
+      callback: () => {
+        fogliaanomala.setVisible(!fogliaanomala.visible);
+      },
+      loop: true
+    });
+
+    this.centerHitbox1 = this.physics.add.sprite(89, 596, null).setOrigin(0.5, 0.5);
+    this.centerHitbox1.body.setSize(20, 80); // Imposta le dimensioni della hitbox
+    this.centerHitbox1.setImmovable(true); // Rendi l'oggetto immobile
+    this.centerHitbox1.setVisible(false); // Rendi l'oggetto invisibile
+    this.centerHitbox1.setDebug(true, true, 0xff0000);
+
+    const fogliaanomala1 = this.add.image(this.centerHitbox1.x, this.centerHitbox1.y, 'lampblu');
+    fogliaanomala1.setOrigin(0.5, 0.75).setDepth(1).setScale(0.95, 0.97);
+    this.time.addEvent({
+      delay: 800,
+      callback: () => {
+        fogliaanomala1.setVisible(!fogliaanomala1.visible);
+      },
+      loop: true
+    });
+
+    this.centerHitbox2 = this.physics.add.sprite(822, 596, null).setOrigin(0.5, 0.5);
+    this.centerHitbox2.body.setSize(20, 80); // Imposta le dimensioni della hitbox
+    this.centerHitbox2.setImmovable(true); // Rendi l'oggetto immobile
+    this.centerHitbox2.setVisible(false); // Rendi l'oggetto invisibile
+    this.centerHitbox2.setDebug(true, true, 0xff0000);
+
+    const fogliaanomala2 = this.add.image(this.centerHitbox2.x, this.centerHitbox2.y, 'lamprosa');
+    fogliaanomala2.setOrigin(0.48, 0.82).setDepth(1).setScale(0.94, 0.95);
+    this.time.addEvent({
+      delay: 600,
+      callback: () => {
+        fogliaanomala2.setVisible(!fogliaanomala2.visible);
+      },
+      loop: true
+    });
+
+    this.centerHitbox3 = this.physics.add.sprite(413, 130, null).setOrigin(0.5, 0.5);
+    this.centerHitbox3.body.setSize(20, 80); // Imposta le dimensioni della hitbox
+    this.centerHitbox3.setImmovable(true); // Rendi l'oggetto immobile
+    this.centerHitbox3.setVisible(false); // Rendi l'oggetto invisibile
+    this.centerHitbox3.setDebug(true, true, 0xff0000);
+
+    const fogliaanomala3 = this.add.image(this.centerHitbox3.x, this.centerHitbox3.y, 'lampverdee');
+    fogliaanomala3.setOrigin(0.459, 0.45).setDepth(1).setScale(0.88, 0.9);
+    this.time.addEvent({
+      delay: 200,
+      callback: () => {
+        fogliaanomala3.setVisible(!fogliaanomala3.visible);
+      },
+      loop: true
+    });
 
     this.centerHitbox4 = this.physics.add.sprite(355, 86, null).setOrigin(0.5, 0.5);
     this.centerHitbox4.body.setSize(40, 50); // Imposta le dimensioni della hitbox
@@ -107,122 +174,51 @@ export default class GamePlay extends Phaser.Scene {
     this.centerHitbox9.setVisible(false); // Rendi l'oggetto invisibile
     this.centerHitbox9.setDebug(true, true, 0xff0000);
 
-    this.centerHitbox13 = this.physics.add.sprite(600, 924, null).setOrigin(0.5, 0.5);
-    this.centerHitbox13.body.setSize(33, 44); // Imposta le dimensioni della hitbox
-    this.centerHitbox13.setImmovable(true); // Rendi l'oggetto immobile
-    this.centerHitbox13.setVisible(false); // Rendi l'oggetto invisibile
-    this.centerHitbox13.setDebug(true, true, 0xff0000);
-
-    this.centerHitbox14 = this.physics.add.sprite(415, 775, null).setOrigin(0.5, 0.5);
-    this.centerHitbox14.body.setSize(20, 80); // Imposta le dimensioni della hitbox
-    this.centerHitbox14.setImmovable(true); // Rendi l'oggetto immobile
-    this.centerHitbox14.setVisible(false); // Rendi l'oggetto invisibile
-    this.centerHitbox14.setDebug(true, true, 0xff0000);
-
-    this.centerHitbox = this.physics.add.sprite(540, 130, null).setOrigin(0.5, 0.5);
-    this.centerHitbox.body.setSize(20, 80); // Imposta le dimensioni della hitbox
-    this.centerHitbox.setImmovable(true); // Rendi l'oggetto immobile
-    this.centerHitbox.setVisible(false); // Rendi l'oggetto invisibile
-    this.centerHitbox.setDebug(true, true, 0xff0000);
-
-    this.centerHitbox1 = this.physics.add.sprite(89, 596, null).setOrigin(0.5, 0.5);
-    this.centerHitbox1.body.setSize(20, 80); // Imposta le dimensioni della hitbox
-    this.centerHitbox1.setImmovable(true); // Rendi l'oggetto immobile
-    this.centerHitbox1.setVisible(false); // Rendi l'oggetto invisibile
-    this.centerHitbox1.setDebug(true, true, 0xff0000);
-
-    this.centerHitbox2 = this.physics.add.sprite(822, 596, null).setOrigin(0.5, 0.5);
-    this.centerHitbox2.body.setSize(20, 80); // Imposta le dimensioni della hitbox
-    this.centerHitbox2.setImmovable(true); // Rendi l'oggetto immobile
-    this.centerHitbox2.setVisible(false); // Rendi l'oggetto invisibile
-    this.centerHitbox2.setDebug(true, true, 0xff0000);
-
-    this.centerHitbox3 = this.physics.add.sprite(413, 130, null).setOrigin(0.5, 0.5);
-    this.centerHitbox3.body.setSize(20, 80); // Imposta le dimensioni della hitbox
-    this.centerHitbox3.setImmovable(true); // Rendi l'oggetto immobile
-    this.centerHitbox3.setVisible(false); // Rendi l'oggetto invisibile
-    this.centerHitbox3.setDebug(true, true, 0xff0000);
-
-    const fogliaanomala = this.add.image(this.centerHitbox.x, this.centerHitbox.y, 'fogliaanomala');
-    fogliaanomala.setOrigin(0.5, 0.52).setDepth(1).setScale(0.91, 0.91);
-    this.time.addEvent({
-      delay: 400,
-      callback: () => {
-        fogliaanomala.setVisible(!fogliaanomala.visible);
-      },
-      loop: true
-    });
-
-    const fogliaanomala1 = this.add.image(this.centerHitbox1.x, this.centerHitbox1.y, 'lampblu');
-    fogliaanomala1.setOrigin(0.5, 0.75).setDepth(1).setScale(0.95, 0.97);
-    this.time.addEvent({
-      delay: 800,
-      callback: () => {
-        fogliaanomala1.setVisible(!fogliaanomala1.visible);
-      },
-      loop: true
-    });
-
-    const fogliaanomala2 = this.add.image(this.centerHitbox2.x, this.centerHitbox2.y, 'lampros');
-    fogliaanomala2.setOrigin(0.48, 0.82).setDepth(1).setScale(0.94, 0.95);
-    this.time.addEvent({
-      delay: 600,
-      callback: () => {
-        fogliaanomala2.setVisible(!fogliaanomala2.visible);
-      },
-      loop: true
-    });
-
-    const fogliaanomala3 = this.add.image(this.centerHitbox3.x, this.centerHitbox3.y, 'lampverdee');
-    fogliaanomala3.setOrigin(0.459, 0.45).setDepth(1).setScale(0.88, 0.9);
-    this.time.addEvent({
-      delay: 200,
-      callback: () => {
-        fogliaanomala3.setVisible(!fogliaanomala3.visible);
-      },
-      loop: true
-    });
-
-    const fogliaanomala4= this.add.image(this.centerHitbox14.x, this.centerHitbox14.y, 'lampgial');
-    fogliaanomala4.setOrigin(0.45, 0.51).setDepth(1).setScale(0.9, 0.92);
-    this.time.addEvent({
-      delay: 500,
-      callback: () => {
-        fogliaanomala4.setVisible(!fogliaanomala4.visible);
-      },
-      loop: true
-    });
-
-    const fogliaanomala5= this.add.image(this.centerHitbox3.x, this.centerHitbox3.y, 'foglia');
-    fogliaanomala4.setOrigin(0.45, 0.51).setDepth(1).setScale(0.9, 0.92);
-    this.time.addEvent({
-      delay: 500,
-      callback: () => {
-        fogliaanomala5.setVisible(!fogliaanomala5.visible);
-      },
-      loop: true
-    });
-
-    // Imposta la telecamera al centro della mappa
-    this.cameras.main.setScroll(mapWidth / 2 - this.cameras.main.width / 2, mapHeight / 2 - this.cameras.main.height / 2);
-    this.cameras.main.setZoom(1);
-
     this.centerHitbox10 = this.physics.add.sprite(540, 725, null).setOrigin(0.5, 0.5);
     this.centerHitbox10.body.setSize(40, 40); // Set the size of the hitbox
     this.centerHitbox10.setImmovable(true); // Make the hitbox immovable
     this.centerHitbox10.setVisible(false); // Make the hitbox invisible
     this.centerHitbox10.setDebug(true, true, 0xff0000);
+    
+    // Add the large ball sprite and set it to be visible initially
+    const pallaGrande = this.add.image(this.centerHitbox10.x, this.centerHitbox10.y, 'pallagrande').setOrigin(0.5, 0.5);
+    pallaGrande.setScale(1).setDepth(1); // Set the scale and depth as needed
 
-    // Move the hitbox in a circular path
-    this.tweens.add({
-      targets: this.centerHitbox10,
-      x: 750,
-      y: 560,
-      duration: 5000,
-      ease: 'Sine.easeInOut',
-      yoyo: true,
-      repeat: -1
+    // Add the small ball sprite and set it to be hidden initially
+    const pallaPiccola = this.add.image(this.centerHitbox10.x, this.centerHitbox10.y, 'pallapiccola').setOrigin(0.5, 0.5);
+    pallaPiccola.setScale(0.5).setDepth(1); // Set the scale and depth as needed
+    pallaPiccola.setVisible(false); // Hide it initially
+
+    // Toggle between the large and small ball every second
+    let isLargeBall = true; // Variable to track which ball is shown
+    this.time.addEvent({
+        delay: 1000, // 1 second delay
+        callback: () => {
+            if (isLargeBall) {
+                pallaGrande.setVisible(true);
+                pallaPiccola.setVisible(false);
+            } else {
+                pallaGrande.setVisible(false);
+                pallaPiccola.setVisible(true);
+            }
+            isLargeBall = !isLargeBall; // Toggle between large and small ball
+        },
+        loop: true // Keep toggling indefinitely
     });
+
+        // Move the hitbox in a circular path
+        this.tweens.add({
+          targets: [this.centerHitbox10, pallaGrande, pallaPiccola],
+          x: 750,
+          y: 560,
+          duration: 5000,
+          ease: 'Sine.easeInOut',
+          yoyo: true,
+          repeat: -1
+        });
+
+    this.physics.add.collider(this.player, this.collisions);
+    this.physics.add.collider(this.player, this.centerHitbox10); // Collider for centerHitbox10
 
     this.centerHitbox11 = this.physics.add.sprite(725, 450, null).setOrigin(0.5, 0.5);
     this.centerHitbox11.body.setSize(40, 40); // Set the size of the hitbox
@@ -258,7 +254,28 @@ export default class GamePlay extends Phaser.Scene {
       repeat: -1
     });
 
-    // Aggiungi le collisioni del player con il layer collisions e con le hitbox
+    this.centerHitbox13 = this.physics.add.sprite(600, 924, null).setOrigin(0.5, 0.5);
+    this.centerHitbox13.body.setSize(33, 44); // Imposta le dimensioni della hitbox
+    this.centerHitbox13.setImmovable(true); // Rendi l'oggetto immobile
+    this.centerHitbox13.setVisible(false); // Rendi l'oggetto invisibile
+    this.centerHitbox13.setDebug(true, true, 0xff0000);
+
+    this.centerHitbox14 = this.physics.add.sprite(415, 775, null).setOrigin(0.5, 0.5);
+    this.centerHitbox14.body.setSize(20, 80); // Imposta le dimensioni della hitbox
+    this.centerHitbox14.setImmovable(true); // Rendi l'oggetto immobile
+    this.centerHitbox14.setVisible(false); // Rendi l'oggetto invisibile
+    this.centerHitbox14.setDebug(true, true, 0xff0000);
+
+    const fogliaanomala4= this.add.image(this.centerHitbox14.x, this.centerHitbox14.y, 'lampgial');
+    fogliaanomala4.setOrigin(0.45, 0.51).setDepth(1).setScale(0.9, 0.92);
+    this.time.addEvent({
+      delay: 500,
+      callback: () => {
+        fogliaanomala4.setVisible(!fogliaanomala4.visible);
+      },
+      loop: true
+    });
+
     this.physics.add.collider(this.player, this.collisions);
     this.physics.add.collider(this.player, this.centerHitbox);
     this.physics.add.collider(this.player, this.centerHitbox1);

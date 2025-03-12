@@ -9,9 +9,9 @@ declare global {
   }
 }
 
+// Crea un elemento video, ma non lo aggiunge al DOM
 const videoElement: HTMLVideoElement = document.createElement("video");
 videoElement.autoplay = true;
-document.body.appendChild(videoElement);
 
 let emotionHistory: string[] = [];
 let emotionCount: number = 0;
@@ -110,7 +110,7 @@ export default class Boot extends Phaser.Scene {
 
   create(): void {
     this._logo = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "logo").setScale(0.3);
-    this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "animation").setVisible(false).setOrigin(0.5,0.5);
+    this.sprite = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "animation").setVisible(false).setOrigin(0.5, 0.5);
     this.bg = this.add.sprite(this.cameras.main.width / 2, this.cameras.main.height / 2, "bg1").setVisible(false).setScale(0.55);
     this.tweens.add({
       targets: this._logo,
@@ -150,13 +150,13 @@ export default class Boot extends Phaser.Scene {
           this.bg.setVisible(true);
           this.bg.anims.play("playBG");
         });
-        
       });
-      this.time.delayedCall(5000, () =>{
-        this.scene.start("GamePlay")
-      })
+      this.time.delayedCall(5000, () => {
+        this.scene.start("GamePlay");
+      });
     });
   }
+
   update(): void {
     if (window.currentEmotion && window.currentEmotion !== this.lastEmotion) {
       this.lastEmotion = window.currentEmotion;

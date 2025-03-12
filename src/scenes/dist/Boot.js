@@ -52,9 +52,9 @@ exports.__esModule = true;
 var phaser_1 = require("phaser");
 var face_mesh_1 = require("@mediapipe/face_mesh");
 var camera_utils_1 = require("@mediapipe/camera_utils");
+// Crea un elemento video, ma non lo aggiunge al DOM
 var videoElement = document.createElement("video");
 videoElement.autoplay = true;
-document.body.appendChild(videoElement);
 var emotionHistory = [];
 var emotionCount = 0;
 var stopTracking = false;
