@@ -1,6 +1,8 @@
-import playerr from '../assets/player/moving';
+import { GameData } from "../GameData";
+import Phaser from "phaser";
+import playerr from '../scenes/moving';
 
-export default class Intro extends Phaser.Scene {
+export default class GamePlay extends Phaser.Scene {
   private player: playerr;
   private _voth = 0;
   private map: Phaser.Tilemaps.Tilemap;

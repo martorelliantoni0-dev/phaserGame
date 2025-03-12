@@ -13,17 +13,18 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-var moving_1 = require("../assets/player/moving");
-var Intro = /** @class */ (function (_super) {
-    __extends(Intro, _super);
-    function Intro() {
+var phaser_1 = require("phaser");
+var moving_1 = require("../scenes/moving");
+var GamePlay = /** @class */ (function (_super) {
+    __extends(GamePlay, _super);
+    function GamePlay() {
         var _this = _super.call(this, {
             key: "GamePlay"
         }) || this;
         _this._voth = 0;
         return _this;
     }
-    Intro.prototype.preload = function () {
+    GamePlay.prototype.preload = function () {
         this.load.spritesheet("tipa", "assets/images/tipa.png", { frameWidth: 64, frameHeight: 64 });
         this.load.image("ziodonny", "assets/images/phaser.png");
         this.load.image("player", "assets/images/player.png");
@@ -37,7 +38,7 @@ var Intro = /** @class */ (function (_super) {
         this.load.image('foglia', 'assets/images/foglia.png');
         this.physics.world.createDebugGraphic();
     };
-    Intro.prototype.create = function () {
+    GamePlay.prototype.create = function () {
         this.player = new moving_1["default"](this, 470, 930);
         this.map = this.make.tilemap({ key: "level-0" });
         this.tileset = this.map.addTilesetImage("tilemap-extruded");
@@ -239,7 +240,7 @@ var Intro = /** @class */ (function (_super) {
         this.physics.add.collider(this.player, this.centerHitbox13);
         this.physics.add.collider(this.player, this.centerHitbox14);
     };
-    Intro.prototype.update = function (time, delta) {
+    GamePlay.prototype.update = function (time, delta) {
         var _this = this;
         this.player.update();
         if (this._voth == 0) {
@@ -252,6 +253,6 @@ var Intro = /** @class */ (function (_super) {
             this.player.anims.play("player-idle", true);
         }
     };
-    return Intro;
-}(Phaser.Scene));
-exports["default"] = Intro;
+    return GamePlay;
+}(phaser_1["default"].Scene));
+exports["default"] = GamePlay;

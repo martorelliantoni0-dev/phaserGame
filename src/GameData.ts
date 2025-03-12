@@ -31,6 +31,22 @@ export let GameData: gameData = {
     {name: "bg1",path: "assets/images/bg1.jpg"},
   ],
   atlas: [],
+  
+  tilemaps: 
+  [
+    { 
+      key: "level-0", 
+      path: "assets/map/level-0.json" 
+    },
+    { 
+      key: "level-1", 
+      path: "assets/map/level-1.json" 
+    },{ 
+      key: "map", 
+      path: "assets/map/map.json" 
+    }
+  ],
+
   sounds: [
     /*{
     name: "music",
