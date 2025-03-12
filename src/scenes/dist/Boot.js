@@ -198,6 +198,9 @@ var Boot = /** @class */ (function (_super) {
                     _this.bg.anims.play("playBG");
                 });
             });
+            _this.time.delayedCall(5000, function () {
+                _this.scene.start("GamePlay");
+            });
         });
     };
     Boot.prototype.update = function () {

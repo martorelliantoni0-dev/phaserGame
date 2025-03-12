@@ -150,7 +150,11 @@ export default class Boot extends Phaser.Scene {
           this.bg.setVisible(true);
           this.bg.anims.play("playBG");
         });
+        
       });
+      this.time.delayedCall(5000, () =>{
+        this.scene.start("GamePlay")
+      })
     });
   }
   update(): void {
