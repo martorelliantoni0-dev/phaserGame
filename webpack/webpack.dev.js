@@ -16,7 +16,7 @@ const dev = {
   devtool: 'inline-source-map',
   devServer: {
     open: true,
-     port: 9000, hot: true,
+     port: 9001, hot: true,
   },
   plugins: [
    

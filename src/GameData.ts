@@ -2,7 +2,7 @@ export let GameData: gameData = {
   globals: {
     gameWidth: 1024,
     gameHeight: 1024,
-    bgColor: "#000000",
+    bgColor: "#ffffff",
     debug: false
   },
 
@@ -24,6 +24,10 @@ export let GameData: gameData = {
     { 
       key: "level-0", 
       path: "assets/map/level-0.json" 
+    },
+    { 
+      key: "level-1", 
+      path: "assets/map/level-1.json" 
     },{ 
       key: "map", 
       path: "assets/map/map.json" 
@@ -36,6 +40,14 @@ export let GameData: gameData = {
     { 
       name: "tilemap-extruded",
       path: "assets/map/tilemap-extruded.png", 
+      width: 32, 
+      height: 32, 
+      spacing: 2,
+      frames: 150
+    },
+    { 
+      name: "tile",
+      path: "assets/map/tile.png", 
       width: 32, 
       height: 32, 
       spacing: 2,
@@ -55,6 +67,12 @@ export let GameData: gameData = {
        height: 64, 
        frames: 36 
     },
+    { name: "player",
+      path: "assets/images/player.png",
+      width: 58, 
+      height: 64, 
+      frames: 50 
+   },
     //creazione della spritesheet per la mappa
 
   ],
@@ -64,6 +82,7 @@ export let GameData: gameData = {
     { name: "set1", path: "assets/map/set1.png" },
     { name: "phaser", path: "assets/images/logo-phaser.png" },
     { name: "freedoom", path: "assets/images/freedoom.png" },
+    { name: "cespuglio", path: "assets/images/fogliaanomala.png" },
     { name: "thelucasart", path: "assets/images/thelucasart.png" },
     { name: "intro-bg", path: "assets/images/intro-bg.jpg" },
     { name: "bg-1", path: "assets/images/bg/1.png" },
